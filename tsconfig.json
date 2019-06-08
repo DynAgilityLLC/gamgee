@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "resolveJsonModule": true,
+      "target": "esnext",
+      "lib": ["esnext"],
+      "noImplicitAny": false,
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "outDir": "dist",
+      "rootDir": "src",
+      "baseUrl": ".",
+      "declaration": true,
+      "types": ["node"],
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": false,
+      "paths": {
+          "*": [
+              "node_modules/*",
+              "src/types/*"
+          ]
+      }
+  },
+  //"include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.test.ts", "**/dist/**/*", "**/bin/**/*"]
+}

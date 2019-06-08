@@ -1,0 +1,10 @@
+{
+  "name": "gamgee-root",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.14.1"
+  },
+  "dependencies": {
+    "typescript": "^3.5.1"
+  }
+}

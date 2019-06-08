@@ -1,0 +1,18 @@
+{
+  "name": "gamgee-lambda-apigateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gamgee": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0.7",
+    "typescript": "^3.5.1"
+  }
+}
