@@ -1,6 +1,6 @@
 {
   "name": "gamgee-lambda-lex",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/index.ts",
   "scripts": {
@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^12.0.7",
-    "gamgee": "^1.0.0"
+    "gamgee": "^1.0.1"
   },
   "devDependencies": {
     "typescript": "^3.5.1"
