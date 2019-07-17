@@ -3,7 +3,7 @@
   Licensed under the MIT License.
 */
 
-import { APIGatewayHttpMethod, APIGatewayResponse, APIGatewayRequestEvent } from 'gamgee';
+import {  APIGatewayResponse, APIGatewayRequestEvent } from 'gamgee';
 
 export abstract class APILambda {
   async get?(params, headers): Promise<any>;
@@ -13,8 +13,8 @@ export abstract class APILambda {
   async delete?(params, headers): Promise<any>;
   async run(event: APIGatewayRequestEvent, context): Promise<APIGatewayResponse> {
     let response;
-
     const httpMethod = event.httpMethod.toLowerCase();
+
     if ((httpMethod === 'post' || httpMethod === 'put' || httpMethod === 'patch') &&  event.headers['Content-Type'] !== 'application/json') {
       return { statusCode: 415 };
     }
