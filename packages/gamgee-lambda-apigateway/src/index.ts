@@ -15,14 +15,14 @@ export abstract class APILambda {
     let response;
 
     const httpMethod = event.httpMethod.toLowerCase();
-    if ((httpMethod === 'post' || httpMethod === 'put' || httpMethod === 'patch') &&  event.headers['content-type'] !== 'application/json') {
+    if ((httpMethod === 'post' || httpMethod === 'put' || httpMethod === 'patch') &&  event.headers['Content-Type'] !== 'application/json') {
       return { statusCode: 415 };
     }
 
     try {
       if (this[event.httpMethod.toLowerCase()] !== undefined) {
         const params = Object.assign({}, event.queryStringParameters, event.pathParameters);
-        response = await this[event.httpMethod.toLowerCase()].apply(this, params, event.headers, event.body);
+        response = await this[event.httpMethod.toLowerCase()].call(this, params, event.headers, event.body);
       }
     } catch (e) {
       console.log('Caught error handling Lambda: ', e);
