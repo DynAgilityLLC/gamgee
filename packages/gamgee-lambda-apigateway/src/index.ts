@@ -50,7 +50,7 @@ const CORS_HEADERS: Array<[string, string]> = [
 
 export abstract class CORSAPILambda extends APILambda {
   async options() {
-    return { statusCode: 200 }
+    return { statusCode: 200 };
   }
   async run(event: APIGatewayRequestEvent, context): Promise<APIGatewayResponse> {
     const response = await super.run(event, context);
