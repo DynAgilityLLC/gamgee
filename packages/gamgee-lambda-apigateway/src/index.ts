@@ -42,11 +42,12 @@ export abstract class APILambda {
   }
 }
 
-const CORS_HEADERS: Array<[string, string]> = [
-  ['Access-Control-Allow-Headers', 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'],
-  ['Access-Control-Allow-Methods', '*'],
-  ['Access-Control-Allow-Origin', process.env.HOST_NAME || '*'],
-]
+const CORS_HEADERS = {
+  'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+  'Access-Control-Allow-Methods': '*',
+  'Access-Control-Allow-Credentials': 'true',
+  'Access-Control-Allow-Origin': process.env.HOST_NAME || '*'
+};
 
 export abstract class CORSAPILambda extends APILambda {
   async options() {
@@ -54,7 +55,7 @@ export abstract class CORSAPILambda extends APILambda {
   }
   async run(event: APIGatewayRequestEvent, context): Promise<APIGatewayResponse> {
     const response = await super.run(event, context);
-    response.headers = (response.headers || []).concat(CORS_HEADERS);
+    response.headers = Object.assign({}, response.headers, CORS_HEADERS);
     return response;
   }
 }
