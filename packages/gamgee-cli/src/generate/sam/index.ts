@@ -21,6 +21,7 @@ const SubTagYamlType = new yaml.Type('!Sub', {
   represent: function (data) {
     return `${data.sub}`;
   },
+  resolve: data => !!data && typeof data === 'string' && data.trim(),
   instanceOf: SubTag
 })
 
@@ -39,10 +40,30 @@ const GetAttYamlType = new yaml.Type('!GetAtt', {
   represent: function (data) {
     return `${data.getatt}`;
   },
+  resolve: data => !!data && typeof data === 'string' && data.trim(),
   instanceOf: GetAttTag
 })
 
-const AWS_SAM_SCHEMA = yaml.Schema.create([ SubTagYamlType, GetAttYamlType ]);
+export class RefTag {
+  public ref: string;
+  constructor(ref: string) {
+    this.ref = ref;
+  }
+}
+
+export const RefTagYamlType = new yaml.Type('!Ref', {
+  kind: 'scalar',
+  construct: function (data) {
+    return new RefTag(data);
+  },
+  represent: function (data) {
+    return `${data.ref}`;
+  },
+  resolve: data => !!data && typeof data === 'string' && data.trim(),
+  instanceOf: RefTag
+})
+
+const AWS_SAM_SCHEMA = yaml.Schema.create([ SubTagYamlType, GetAttYamlType, RefTagYamlType ]);
 
 export function ReadSAMYaml(samTemplatePath: string) {
   const samTemplateYaml = fs.readFileSync(samTemplatePath, 'utf8');

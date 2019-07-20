@@ -20,7 +20,7 @@ export interface APIGatewayRequestEvent {
   isBase64Encoded: boolean;
 }
 
-export interface APIGatewayEventSource<path, name='', method='any', auth='NONE', cors=true> {
+export interface APIGatewayEventSource<path, name='', method='any', auth='NONE', restapiid='', cors=false> {
   run(event: APIGatewayRequestEvent, context: any): Promise<APIGatewayResponse>;
 }
 export interface APIGatewayResponse {

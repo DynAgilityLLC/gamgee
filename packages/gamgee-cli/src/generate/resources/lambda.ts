@@ -5,6 +5,8 @@
 
 import { APIGatewayHttpMethod } from 'gamgee';
 import { Resource, TypeAnnotation, getListFromTypeAnnotation, getObjectFromTypeAnnotation } from '.';
+import { RefTag } from '../sam';
+import { timingSafeEqual } from 'crypto';
 
 export abstract class LambdaEventSource extends TypeAnnotation {
   public name: string;
@@ -22,12 +24,19 @@ interface IAPIGatewayEvent {
   name: string;
   path: string;
   method: APIGatewayHttpMethod;
+  auth: string;
+  restapiid: string;
+  cors: boolean;
 }
 
 export class APIGatewayEventSource extends LambdaEventSource implements IAPIGatewayEvent {
   public path: string;
   public method: APIGatewayHttpMethod;
-  constructor(projectName: string, fileName: string, className: string, {path, name, method}: IAPIGatewayEvent) {
+  public auth: string;
+  public restapiid: string;
+  public RestApiId: string | RefTag;
+  public cors: boolean;
+  constructor(projectName: string, fileName: string, className: string, {path, name, method, auth, restapiid, cors}: IAPIGatewayEvent) {
     super(projectName, fileName, className, name);
     if (!this.name || this.name.length === 0) {
       this.name = `${className}API`;
@@ -35,9 +44,15 @@ export class APIGatewayEventSource extends LambdaEventSource implements IAPIGate
     this.name = name;
     this.path = path;
     this.method = method;
+    this.auth = auth;
+    this.RestApiId = restapiid;
+    if (restapiid !== undefined && restapiid.startsWith('!Ref')) {
+      this.RestApiId = new RefTag(restapiid.substr(5));
+    }
+    this.cors = cors;
   }
   public toSAMTemplate() {
-    return { 
+    const template: any = { 
       [this.name]: {
         Type: 'Api',
         Properties: {
@@ -45,7 +60,14 @@ export class APIGatewayEventSource extends LambdaEventSource implements IAPIGate
           Method: this.method
         }
       }
+    };
+    if (this.auth !== undefined && this.auth !== '') {
+      template[this.name].Properties.Auth = { Authorizer: this.auth}
     }
+    if (this.RestApiId !== undefined && this.RestApiId !== '') {
+      template[this.name].Properties.RestApiId = this.RestApiId;
+    }
+    return template;
   }
 }
 
