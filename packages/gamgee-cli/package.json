@@ -1,6 +1,6 @@
 {
   "name": "gamgee-cli",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "bin": {
     "gamgee": "./bin/gamgee.js"
   },
@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^12.0.7",
-    "gamgee": "^1.0.7",
+    "gamgee": "^1.0.9",
     "glob": "^7.1.4",
     "js-yaml": "^3.13.1",
     "minimist": "^1.2.0",
