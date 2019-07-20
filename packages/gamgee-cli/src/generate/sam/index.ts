@@ -25,7 +25,7 @@ const SubTagYamlType = new yaml.Type('!Sub', {
   instanceOf: SubTag
 })
 
-class GetAttTag {
+export class GetAttTag {
   public getatt: string;
   constructor(getatt: string) {
     this.getatt = getatt;

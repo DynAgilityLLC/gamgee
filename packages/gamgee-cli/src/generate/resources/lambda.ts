@@ -5,7 +5,7 @@
 
 import { APIGatewayHttpMethod } from 'gamgee';
 import { Resource, TypeAnnotation, getListFromTypeAnnotation, getObjectFromTypeAnnotation } from '.';
-import { RefTag } from '../sam';
+import { RefTag, GetAttTag } from '../sam';
 import { timingSafeEqual } from 'crypto';
 
 export abstract class LambdaEventSource extends TypeAnnotation {
@@ -143,8 +143,12 @@ export class LambdaTimeout extends LambdaProperty {
 
 export class LambdaRole extends LambdaProperty {
   public arn: string;
-  constructor(projectName, fileName, className, {arn}) {
+  constructor(projectName, fileName, className, {RoleARN}) {
     super(projectName, fileName, className);
+    let arn = RoleARN;
+    if (RoleARN.startsWith('!GetAtt')) {
+      arn = new GetAttTag(RoleARN.substr(8))
+    }
     this.arn = arn;
   }
   public toSAMTemplate() {
