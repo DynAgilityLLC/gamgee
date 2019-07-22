@@ -15,15 +15,15 @@ export abstract class APILambda {
   async run(event: APIGatewayRequestEvent, context): Promise<APIGatewayResponse> {
     let response;
     const httpMethod = event.httpMethod.toLowerCase();
-
-    if ((httpMethod === 'post' || httpMethod === 'put' || httpMethod === 'patch') &&  event.headers['Content-Type'] !== 'application/json') {
+    const  headers = Object.assign({}, ...Object.keys(event.headers).map((k) => ({ [k.toLowerCase()]: event.headers[k] })));
+    if ((httpMethod === 'post' || httpMethod === 'put' || httpMethod === 'patch') &&  headers['content-type'] !== 'application/json') {
       return { statusCode: 415 };
     }
 
     try {
       if (this[event.httpMethod.toLowerCase()] !== undefined) {
         const params = Object.assign({}, event.queryStringParameters, event.pathParameters);
-        response = await this[event.httpMethod.toLowerCase()].call(this, params, event.headers, event.body);
+        response = await this[event.httpMethod.toLowerCase()].call(this, params, headers, event.body);
       }
     } catch (e) {
       console.log('Caught error handling Lambda: ', e);
