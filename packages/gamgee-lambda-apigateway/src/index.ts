@@ -44,7 +44,7 @@ export abstract class APILambda {
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-  'Access-Control-Allow-Methods': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH',
   'Access-Control-Allow-Credentials': 'true',
   'Access-Control-Allow-Origin': process.env.HOST_NAME || '*'
 };
