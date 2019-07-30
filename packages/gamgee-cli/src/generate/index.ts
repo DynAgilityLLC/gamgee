@@ -46,6 +46,9 @@ export async function GenerateSAMEntries(samTemplatePath: string, projectPath: s
       OutputLambdaHandlerJS(resource as any, tsconfig.compilerOptions.rootDir, tsconfig.compilerOptions.outDir);
     }
   }
+
+  classes = classes.filter(c => JSON.stringify(c) != undefined);
+
   const newResources = classes.map((c) => c.toSAMTemplate());
   console.log("  - Merging resources from project to template:")
   Object.values(newResources).forEach((i) => Object.keys(i).forEach((j) => console.log(`      ${j} - ${i[j]['Type']}`)));
