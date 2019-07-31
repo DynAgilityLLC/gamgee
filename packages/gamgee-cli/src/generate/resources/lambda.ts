@@ -185,7 +185,6 @@ export class LambdaTag extends TypeAnnotation {
 export class LambdaTracing extends LambdaProperty {
   public mode: string;
   private validate(mode) {
-    console.log(mode);
     if (mode !== 'Active' && mode !== 'PassThrough') {
       throw new TypeError('LambdaTracing Mode must be "Active" or "PassThrough"');
     }
