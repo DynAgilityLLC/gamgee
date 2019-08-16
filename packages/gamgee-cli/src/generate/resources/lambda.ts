@@ -5,8 +5,21 @@
 
 import { APIGatewayHttpMethod } from 'gamgee';
 import { Resource, TypeAnnotation, getListFromTypeAnnotation, getObjectFromTypeAnnotation } from '.';
-import { RefTag, GetAttTag } from '../sam';
-import { timingSafeEqual } from 'crypto';
+import { RefTag, GetAttTag, SubTag } from '../sam';
+
+const ProcessTags = (value: string) => {
+  if (value === undefined) return value;
+  if (value.startsWith('!Ref')) {
+    return new RefTag(value.substr(5));
+  }
+  if (value.startsWith('!GetAtt')) {
+    return new GetAttTag(value.substr(8))
+  }
+  if (value.startsWith('!Sub')) {
+    return new SubTag(value.substr(5));
+  }
+  return value;
+}
 
 export abstract class LambdaEventSource extends TypeAnnotation {
   public name: string;
@@ -34,7 +47,7 @@ export class APIGatewayEventSource extends LambdaEventSource implements IAPIGate
   public method: APIGatewayHttpMethod;
   public auth: string;
   public restapiid: string;
-  public RestApiId: string | RefTag;
+  public RestApiId: any;
   public cors: boolean;
   constructor(projectName: string, fileName: string, className: string, {path, name, method, auth, restapiid, cors}: IAPIGatewayEvent) {
     super(projectName, fileName, className, name);
@@ -45,10 +58,7 @@ export class APIGatewayEventSource extends LambdaEventSource implements IAPIGate
     this.path = path;
     this.method = method;
     this.auth = auth;
-    this.RestApiId = restapiid;
-    if (restapiid !== undefined && restapiid.startsWith('!Ref')) {
-      this.RestApiId = new RefTag(restapiid.substr(5));
-    }
+    this.RestApiId = ProcessTags(restapiid);
     this.cors = cors;
   }
   public toSAMTemplate() {
@@ -142,14 +152,10 @@ export class LambdaTimeout extends LambdaProperty {
 }
 
 export class LambdaRole extends LambdaProperty {
-  public arn: string;
+  public arn: any;
   constructor(projectName, fileName, className, {RoleARN}) {
     super(projectName, fileName, className);
-    let arn = RoleARN;
-    if (RoleARN.startsWith('!GetAtt')) {
-      arn = new GetAttTag(RoleARN.substr(8))
-    }
-    this.arn = arn;
+    this.arn = ProcessTags(RoleARN);
   }
   public toSAMTemplate() {
     return { Role: this.arn };
@@ -158,11 +164,11 @@ export class LambdaRole extends LambdaProperty {
 
 export class LambdaEnvironment extends TypeAnnotation {
   public key: string;
-  public value: string;
-  constructor(projectName, fileName, className, {key, value}) {
+  public value: any;
+  constructor(projectName, fileName, className, {Key, Value}) {
     super(projectName, fileName, className);
-    this.key = key;
-    this.value = value;
+    this.key = Key;
+    this.value = ProcessTags(Value);
   }
   public toSAMTemplate() {
     return { [this.key]: this.value };
@@ -171,11 +177,11 @@ export class LambdaEnvironment extends TypeAnnotation {
 
 export class LambdaTag extends TypeAnnotation {
   public key: string;
-  public value: string;
-  constructor(projectName, fileName, className, {key, value}) {
+  public value: any;
+  constructor(projectName, fileName, className, {Key, Value}) {
     super(projectName, fileName, className);
-    this.key = key;
-    this.value = value;
+    this.key = Key;
+    this.value = ProcessTags(Value);
   }
   public toSAMTemplate() {
     return { [this.key]: this.value };
@@ -196,5 +202,24 @@ export class LambdaTracing extends LambdaProperty {
   }
   public toSAMTemplate() {
     return { Tracing: this.mode };
+  }
+}
+
+export class SNSEventSource extends LambdaEventSource {
+  public SNSTopic: any;
+  constructor(projectName: string, fileName: string, className: string, {Name, SNSTopic}) {
+    super(projectName, fileName, className, Name);
+    this.SNSTopic = ProcessTags(SNSTopic);
+  }
+  public toSAMTemplate() {
+    const template: any = { 
+      [this.name]: {
+        Type: 'SNS',
+        Properties: {
+          Topic: this.SNSTopic
+        }
+      }
+    };
+    return template;
   }
 }

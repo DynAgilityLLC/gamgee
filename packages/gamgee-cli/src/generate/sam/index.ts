@@ -6,7 +6,7 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
 
-class SubTag {
+export class SubTag {
   public sub: string;
   constructor(sub: string) {
     this.sub = sub;

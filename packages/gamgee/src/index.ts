@@ -17,11 +17,15 @@ export interface LambdaTag<Key, Value> {};
 export interface LambdaTracing<Mode> {};
 
 
-export interface ScheduleEvent<Schedule> {
+export interface ScheduleEventSource<Schedule> {
   run(event: any, context: any): Promise<any>;
 }
 
-export interface S3Event<Bucket, Event> {
+export interface S3EventSource<Bucket, Event> {
+  run(event: any, context: any): Promise<any>;
+}
+
+export interface SNSEventSource<Name, SNSTopic> {
   run(event: any, context: any): Promise<any>;
 }
 
